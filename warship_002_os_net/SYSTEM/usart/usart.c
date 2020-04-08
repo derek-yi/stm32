@@ -238,19 +238,24 @@ void uart_task(void *pdata)
         if ( memcmp(user_rx_cmd, "key-run", 7) == 0) {
             OSTaskResume(KEY_TASK_PRIO);		
         }
-        
-        if ( memcmp(user_rx_cmd, "server", 6) == 0) {
+
+        if ( memcmp(user_rx_cmd, "tcp_srv", 7) == 0) {
             tcp_server_test();
             lwip_test_ui(3);//重新加载UI
         }
         
-        if ( memcmp(user_rx_cmd, "client", 6) == 0) {
+        if ( memcmp(user_rx_cmd, "tcp_cli", 7) == 0) {
             tcp_client_test();
             lwip_test_ui(3);//重新加载UI
         }
         
-        if ( memcmp(user_rx_cmd, "udp", 3) == 0) {
+        if ( memcmp(user_rx_cmd, "udp_srv", 7) == 0) {
             udp_demo_test();
+            lwip_test_ui(3);//重新加载UI
+        }
+        
+        if ( memcmp(user_rx_cmd, "net_reset", 7) == 0) {
+            DM9000_Init();
             lwip_test_ui(3);//重新加载UI
         }
 	}

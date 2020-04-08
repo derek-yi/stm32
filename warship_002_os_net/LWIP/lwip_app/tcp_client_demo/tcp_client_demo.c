@@ -28,7 +28,7 @@
 u8 tcp_client_recvbuf[TCP_CLIENT_RX_BUFSIZE];	
 
 //TCP服务器发送数据内容
-const u8 *tcp_client_sendbuf="WarShip STM32F103 TCP Client send data\r\n";
+const u8 *tcp_client_sendbuf = "WarShip STM32F103 TCP Client send data\r\n";
 
 //TCP Client 测试全局状态标记变量
 //bit7:0,没有数据要发送;1,有数据要发送
@@ -46,18 +46,18 @@ void tcp_client_set_remoteip(void)
 	lcd_print_log(NULL);
 	lcd_print_log("Remote IP Set(KEY0:+ KEY2:- KEY_UP:OK)");  
 
-	tbuf=mymalloc(SRAMIN, 100);	//申请内存
+	tbuf = mymalloc(SRAMIN, 100);	//申请内存
 	if(tbuf == NULL) return;
     
 	//前三个IP保持和DHCP得到的IP一致
-	lwipdev.remoteip[0]=lwipdev.ip[0];
-	lwipdev.remoteip[1]=lwipdev.ip[1];
-	lwipdev.remoteip[2]=lwipdev.ip[2]; 
+	lwipdev.remoteip[0] = lwipdev.ip[0];
+	lwipdev.remoteip[1] = lwipdev.ip[1];
+	lwipdev.remoteip[2] = lwipdev.ip[2]; 
     
 	while(1)
 	{
 		key = KEY_Scan(0);
-		if(key==WKUP_PRES)break;
+		if(key == WKUP_PRES)break;
         
 		else if(key)
 		{
@@ -77,7 +77,7 @@ void tcp_client_set_remoteip(void)
 void tcp_client_test(void)
 {
  	struct tcp_pcb *tcppcb;  	//定义一个TCP服务器控制块
-	struct ip_addr rmtipaddr;  	//远端ip地址
+	struct ip4_addr rmtipaddr;  	//远端ip地址
 	
 	u8 *tbuf;
  	u8 key;
@@ -90,8 +90,8 @@ void tcp_client_test(void)
 	lcd_print_log("WarShip STM32");
 	lcd_print_log("TCP Client Test");
 
-	tbuf=mymalloc(SRAMIN,200);	//申请内存
-	if(tbuf==NULL)return ;		//内存申请失败了,直接退出
+	tbuf = mymalloc(SRAMIN,200);	//申请内存
+	if(tbuf == NULL)return ;		//内存申请失败了,直接退出
 	
 	sprintf((char*)tbuf,"Local IP:%d.%d.%d.%d",lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3]);//服务器IP
 	lcd_print_log(tbuf);  
@@ -111,9 +111,9 @@ void tcp_client_test(void)
 	while(res==0)
 	{
 		key = KEY_Scan(0);
-		if(key==WKUP_PRES)break;
+		if(key == WKUP_PRES) break;
         
-		if(key==KEY0_PRES)//KEY0按下了,发送数据
+		if(key == KEY0_PRES)//KEY0按下了,发送数据
 		{
 			tcp_client_flag|=1<<7;//标记要发送数据
 		}
@@ -169,9 +169,10 @@ void tcp_client_test(void)
 err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
 {
 	struct tcp_client_struct *es=NULL;  
+    
 	if(err==ERR_OK)   
 	{
-		es=(struct tcp_client_struct*)mem_malloc(sizeof(struct tcp_client_struct));  //申请内存
+		es = (struct tcp_client_struct*)mem_malloc(sizeof(struct tcp_client_struct));  //申请内存
 		if(es) //内存申请成功
 		{
  			es->state=ES_TCPCLIENT_CONNECTED;//状态为连接成功
@@ -184,15 +185,18 @@ err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
 			tcp_poll(tpcb,tcp_client_poll,1); 	//初始化LwIP的tcp_poll回调功能 
  			tcp_client_flag|=1<<5; 				//标记连接到服务器了
 			err=ERR_OK;
-		}else
+		}
+        else
 		{ 
 			tcp_client_connection_close(tpcb,es);//关闭连接
 			err=ERR_MEM;	//返回内存分配错误
 		}
-	}else
+	}
+    else
 	{
 		tcp_client_connection_close(tpcb,0);//关闭连接
 	}
+    
 	return err;
 }
     
@@ -205,7 +209,7 @@ err_t tcp_client_recv(void *arg,struct tcp_pcb *tpcb,struct pbuf *p,err_t err)
 	err_t ret_err; 
     
 	LWIP_ASSERT("arg != NULL",arg != NULL);
-	es=(struct tcp_client_struct *)arg; 
+	es = (struct tcp_client_struct *)arg; 
 	if(p==NULL)//如果从服务器接收到空的数据帧就关闭连接
 	{
 		es->state=ES_TCPCLIENT_CLOSING;//需要关闭TCP 连接了 
@@ -214,7 +218,7 @@ err_t tcp_client_recv(void *arg,struct tcp_pcb *tpcb,struct pbuf *p,err_t err)
 	}
     else if(err!= ERR_OK)//当接收到一个非空的数据帧,但是err!=ERR_OK
 	{ 
-		if(p)pbuf_free(p);//释放接收pbuf
+		if(p) pbuf_free(p);//释放接收pbuf
 		ret_err=err;
 	}
     else if(es->state==ES_TCPCLIENT_CONNECTED)	//当处于连接状态时
@@ -244,6 +248,7 @@ err_t tcp_client_recv(void *arg,struct tcp_pcb *tpcb,struct pbuf *p,err_t err)
 		pbuf_free(p); //释放内存
 		ret_err=ERR_OK;
 	}
+    
 	return ret_err;
 }
 
@@ -258,6 +263,7 @@ err_t tcp_client_poll(void *arg, struct tcp_pcb *tpcb)
 {
 	err_t ret_err;
 	struct tcp_client_struct *es; 
+    
 	es=(struct tcp_client_struct*)arg;
 	if(es!=NULL)  //连接处于空闲可以发送数据
 	{
@@ -287,9 +293,11 @@ err_t tcp_client_poll(void *arg, struct tcp_pcb *tpcb)
 err_t tcp_client_sent(void *arg, struct tcp_pcb *tpcb, u16_t len)
 {
 	struct tcp_client_struct *es;
+    
 	LWIP_UNUSED_ARG(len);
 	es=(struct tcp_client_struct*)arg;
 	if(es->p)tcp_client_senddata(tpcb,es);//发送数据
+	
 	return ERR_OK;
 }
 

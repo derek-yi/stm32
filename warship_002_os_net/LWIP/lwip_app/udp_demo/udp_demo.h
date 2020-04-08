@@ -1,10 +1,13 @@
 #ifndef __UDP_DEMO_H
 #define __UDP_DEMO_H
+
 #include "sys.h"
 #include "lwip_comm.h"
 #include "lwip/pbuf.h"
+#include "lwip/ip4_addr.h"
 #include "lwip/udp.h"
 #include "lwip/tcp.h"
+
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK 战舰开发板 V3
@@ -26,7 +29,7 @@
 
  
 void udp_demo_test(void);
-void udp_demo_recv(void *arg,struct udp_pcb *upcb,struct pbuf *p,struct ip_addr *addr,u16_t port);
+void udp_demo_recv(void *arg,struct udp_pcb *upcb,struct pbuf *p,struct ip4_addr *addr,u16_t port);
 void udp_demo_senddata(struct udp_pcb *upcb);
 void udp_demo_connection_close(struct udp_pcb *upcb);
 

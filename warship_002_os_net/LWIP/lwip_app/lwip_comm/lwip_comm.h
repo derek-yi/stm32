@@ -1,5 +1,6 @@
 #ifndef _LWIP_COMM_H
 #define _LWIP_COMM_H 
+
 #include "dm9000.h" 
 
 #define LWIP_MAX_DHCP_TRIES		4   //DHCP服务器最大重试次数
@@ -20,6 +21,15 @@ typedef struct
 					//0XFF,获取失败.
 }__lwip_dev;
 extern __lwip_dev lwipdev;	//lwip控制结构体
+
+ 
+//网卡的名字
+#define IFNAME0 'e'
+#define IFNAME1 'n'
+ 
+
+err_t ethernetif_init(struct netif *netif);
+err_t ethernetif_input(struct netif *netif);
 
 void lwip_pkt_handle(void);
 void lwip_periodic_handle(void);

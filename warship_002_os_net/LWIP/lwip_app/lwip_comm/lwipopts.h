@@ -38,6 +38,9 @@
 //PBUF_POOL_BUFSIZE:每个pbuf内存池大小. 
 #define PBUF_POOL_BUFSIZE       1500
 
+#define IP_FRAG             0
+#define IP_REASSEMBLY       0
+#define IP_OPTIONS_ALLOWED  0
 
 /* ---------- TCP选项---------- */
 #define LWIP_TCP                1  //为1是使用TCP
@@ -63,7 +66,7 @@
 #define LWIP_ICMP                 1 //使用ICMP协议
 
 /* ---------- DHCP选项---------- */
-//当使用DHCP时此位应该为1,LwIP 0.5.1版本中没有DHCP服务.
+//当使用DHCP时此位应该为1
 #define LWIP_DHCP               1
 
 /* ---------- UDP选项 ---------- */ 
@@ -72,8 +75,8 @@
 
 
 /* ---------- Statistics options ---------- */
-#define LWIP_STATS 0
-#define LWIP_PROVIDE_ERRNO 1
+#define LWIP_STATS          0
+#define LWIP_PROVIDE_ERRNO  1
 
 
 /*
@@ -92,11 +95,13 @@
 */
 //LWIP_SOCKET==1:使能Socket API(要求使用sockets.c)
 #define LWIP_SOCKET                     0
+#define LWIP_COMPAT_SOCKETS             0
 
 #define LWIP_COMPAT_MUTEX               1
 
 #define LWIP_SO_RCVTIMEO                1 //通过定义LWIP_SO_RCVTIMEO使能netconn结构体中recv_timeout,使用recv_timeout可以避免阻塞线程
 
+#define MEMP_MEM_MALLOC                 1
 
 /*
    ----------------------------------------
@@ -104,6 +109,7 @@
    ----------------------------------------
 */
 //#define LWIP_DEBUG                     1 //开启DEBUG选项
+#define LWIP_NOASSERT
 
 #define ICMP_DEBUG                      LWIP_DBG_OFF //开启/关闭ICMPdebug
 

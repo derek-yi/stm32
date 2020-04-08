@@ -111,7 +111,7 @@ void net_func_init()
 #endif
 
     lwip_test_ui(2);        //加载后半部分UI 
-    httpd_init();           //Web Server模式
+    //httpd_init();           //Web Server模式
 
 }
 
@@ -391,7 +391,7 @@ void flags_task(void *pdata)
 	{
 		flags = OSFlagPend(flags_key, 0X001F, OS_FLAG_WAIT_SET_ANY, 0, &err);//等待信号量
 
-        printf("flags_task> flags = 0x%x \r\n", flags);
+        //printf("flags_task> flags = 0x%x \r\n", flags);
  		if(flags&0X0001) LCD_ShowString(140,162,240,16,16,"KEY0 DOWN  "); 
 		if(flags&0X0002) LCD_ShowString(140,162,240,16,16,"KEY1 DOWN  "); 
 		if(flags&0X0004) LCD_ShowString(140,162,240,16,16,"KEY2 DOWN  "); 

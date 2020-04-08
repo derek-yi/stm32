@@ -54,17 +54,17 @@ void tcp_server_test(void)
 	lcd_print_log("TCP Server Test");
     
 	tbuf = mymalloc(SRAMIN, 200);//申请内存
-	if(tbuf==NULL) return ; //内存申请失败了,直接退出
+	if(tbuf == NULL) return ; //内存申请失败了,直接退出
 	
-	sprintf((char*)tbuf,"Server IP:%d.%d.%d.%d",lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3]);//服务器IP
+	sprintf((char*)tbuf, "Server IP:%d.%d.%d.%d", lwipdev.ip[0],lwipdev.ip[1],lwipdev.ip[2],lwipdev.ip[3]);//服务器IP
 	lcd_print_log(tbuf);  
-	sprintf((char*)tbuf,"Server Port:%d",TCP_SERVER_PORT);//服务器端口号
+	sprintf((char*)tbuf, "Server Port:%d", TCP_SERVER_PORT);//服务器端口号
 	lcd_print_log(tbuf); 
     
 	tcppcbnew = tcp_new();	//创建一个新的pcb
 	if(tcppcbnew)			//创建成功
 	{ 
-		err = tcp_bind(tcppcbnew,IP_ADDR_ANY,TCP_SERVER_PORT);	//将本地IP与指定的端口号绑定在一起,IP_ADDR_ANY为绑定本地所有的IP地址
+		err = tcp_bind(tcppcbnew, IP_ADDR_ANY, TCP_SERVER_PORT);	//将本地IP与指定的端口号绑定在一起,IP_ADDR_ANY为绑定本地所有的IP地址
 		if(err == ERR_OK)	//绑定完成
 		{
 		    lcd_print_log("tcp_bind ok"); 
@@ -78,17 +78,17 @@ void tcp_server_test(void)
 	POINT_COLOR=BLUE;//蓝色字体
 	while(res==0)
 	{
-		key= KEY_Scan(0);
+		key = KEY_Scan(0);
 		if(key==WKUP_PRES)break;
         
-		if(tcp_server_flag&1<<6)//是否收到数据?
+		if(tcp_server_flag&1<<6)//是否收到数据
 		{
 			lcd_print_log(tcp_server_recvbuf);//显示接收到的数据	
 			tcp_server_flag&=~(1<<6);//标记数据已经被处理了.
 			tcp_server_flag|=1<<7;//标记要发送数据
 		}
         
-		if(tcp_server_flag&1<<5)//是否连接上?
+		if(tcp_server_flag&1<<5)//是否连接上
 		{
 			if(connflag==0)
 			{ 
@@ -127,12 +127,12 @@ err_t tcp_server_accept(void *arg,struct tcp_pcb *newpcb,err_t err)
 	LWIP_UNUSED_ARG(err);
 	tcp_setprio(newpcb,TCP_PRIO_MIN);//设置新创建的pcb优先级
 	
-	es=(struct tcp_server_struct*)mem_malloc(sizeof(struct tcp_server_struct)); //分配内存
- 	if(es!=NULL) //内存分配成功
+	es = (struct tcp_server_struct*)mem_malloc(sizeof(struct tcp_server_struct)); //分配内存
+ 	if(es != NULL) //内存分配成功
 	{
-		es->state=ES_TCPSERVER_ACCEPTED;  	//接收连接
-		es->pcb=newpcb;
-		es->p=NULL;
+		es->state = ES_TCPSERVER_ACCEPTED;  	//接收连接
+		es->pcb = newpcb;
+		es->p = NULL;
 		
 		tcp_arg(newpcb,es);
 		tcp_recv(newpcb, tcp_server_recv);	//初始化tcp_recv()的回调函数
@@ -147,7 +147,11 @@ err_t tcp_server_accept(void *arg,struct tcp_pcb *newpcb,err_t err)
 		lwipdev.remoteip[2]=(newpcb->remote_ip.addr>>16)&0xff; 	//IADDR2
 		lwipdev.remoteip[3]=(newpcb->remote_ip.addr>>24)&0xff; 	//IADDR1 
 		ret_err=ERR_OK;
-	}else ret_err=ERR_MEM;
+	} 
+    else 
+    {
+        ret_err=ERR_MEM;
+    }
     
 	return ret_err;
 }
@@ -162,8 +166,8 @@ err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err
     
 	LWIP_ASSERT("arg != NULL",arg != NULL);
     
-	es=(struct tcp_server_struct *)arg;
-	if(p==NULL) //从客户端接收到空数据
+	es = (struct tcp_server_struct *)arg;
+	if(p == NULL) //从客户端接收到空数据
 	{
 		es->state=ES_TCPSERVER_CLOSING;//需要关闭TCP 连接了
 		es->p=p; 
@@ -171,10 +175,10 @@ err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err
 	}
     else if(err!=ERR_OK)	//从客户端接收到一个非空数据,但是由于某种原因err!=ERR_OK
 	{
-		if(p)pbuf_free(p);	//释放接收pbuf
+		if(p) pbuf_free(p);	//释放接收pbuf
 		ret_err=err;
 	}
-    else if(es->state==ES_TCPSERVER_ACCEPTED) 	//处于连接状态
+    else if(es->state == ES_TCPSERVER_ACCEPTED) 	//处于连接状态
 	{
 		if(p!=NULL)  //当处于连接状态并且接收到的数据不为空时将其打印出来
 		{
@@ -282,6 +286,7 @@ void tcp_server_senddata(struct tcp_pcb *tpcb, struct tcp_server_struct *es)
 	 }
 
 } 
+
 //关闭tcp连接
 void tcp_server_connection_close(struct tcp_pcb *tpcb, struct tcp_server_struct *es)
 {
@@ -303,12 +308,14 @@ extern struct tcp_pcb *tcp_tw_pcbs;				//在 tcp.c里面
 void tcp_server_remove_timewait(void)
 {
 	struct tcp_pcb *pcb,*pcb2; 
+    
 	while(tcp_active_pcbs!=NULL)
 	{
 		lwip_periodic_handle();	//继续轮询
 		lwip_pkt_handle();
  		delay_ms(10);			//等待tcp_active_pcbs为空  
 	}
+    
 	pcb=tcp_tw_pcbs;
 	while(pcb!=NULL)//如果有等待状态的pcbs
 	{

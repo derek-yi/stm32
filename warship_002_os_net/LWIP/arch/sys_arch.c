@@ -32,13 +32,14 @@
 /* lwIP includes. */
 #include "lwip/debug.h"
 #include "lwip/def.h"
-#include "lwip/lwip_sys.h"
 #include "lwip/mem.h"
 #include "timer.h"
 
 //为LWIP提供计时
 extern uint32_t lwip_localtime;//lwip本地时间计数器,单位:ms
-u32_t sys_now(void){
+
+u32_t sys_now(void)
+{
 	return lwip_localtime;
 }
 

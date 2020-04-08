@@ -160,7 +160,7 @@ OSIntCtxSw
 PendSV_Handler
     CPSID   I                                                   ; Prevent interruption during context switch
     MRS     R0, PSP                                             ; PSP is process stack pointer 如果在用PSP堆栈,则可以忽略保存寄存器,参考CM3权威中的双堆栈-白菜注
-    CBZ     R0, PendSV_Handler_Nosave		                    ; Skip register save the first time
+    CBZ     R0, PendSV_Handler_Nosave		                ; Skip register save the first time
 
     SUBS    R0, R0, #0x20                                       ; Save remaining regs r4-11 on process stack
     STM     R0, {R4-R11}

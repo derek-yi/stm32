@@ -32,18 +32,16 @@
 #ifndef __CC_H__
 #define __CC_H__
 
-#include "cpu.h"
 #include "stdio.h"
 
-/*-------------data type------------------------------------------------------*/
+#define BYTE_ORDER  LITTLE_ENDIAN  //Ð¡¶ËÄ£Ê½
 
+/*-------------data type------------------------------------------------------*/
 typedef unsigned   char    u8_t;    /* Unsigned 8 bit quantity         */
 typedef signed     char    s8_t;    /* Signed    8 bit quantity        */
 typedef unsigned   short   u16_t;   /* Unsigned 16 bit quantity        */
 typedef signed     short   s16_t;   /* Signed   16 bit quantity        */
-typedef unsigned   long    u32_t;   /* Unsigned 32 bit quantity        */
-typedef signed     long    s32_t;   /* Signed   32 bit quantity        */
-typedef u32_t mem_ptr_t;            /* Unsigned 32 bit quantity        */
+
 typedef int sys_prot_t;
 
 /*-------------critical region protection (depends on uC/OS-II setting)-------*/
@@ -95,7 +93,6 @@ typedef int sys_prot_t;
 #endif
 
 /*---define (sn)printf formatters for these lwip types, for lwip DEBUG/STATS--*/
-
 #define U16_F "4d"
 #define S16_F "4d"
 #define X16_F "4x"

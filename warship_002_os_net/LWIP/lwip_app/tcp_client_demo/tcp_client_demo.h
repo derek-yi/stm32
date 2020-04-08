@@ -1,12 +1,15 @@
 #ifndef _TCP_CLIENT_H
 #define _TCP_CLIENT_H
+
 #include "sys.h"
 #include "lwip/debug.h"
 #include "lwip/stats.h"
+#include "lwip/ip4_addr.h"
 #include "lwip/tcp.h"
 #include "lwip/memp.h"
 #include "lwip/mem.h"
 #include "lwip_comm.h"
+
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK 战舰开发板 V3
@@ -37,6 +40,7 @@ enum tcp_client_states
 	ES_TCPCLIENT_CONNECTED,		//连接到服务器了 
 	ES_TCPCLIENT_CLOSING,		//关闭连接
 }; 
+
 //LWIP回调函数使用的结构体
 struct tcp_client_struct
 {
@@ -54,4 +58,5 @@ err_t tcp_client_poll(void *arg, struct tcp_pcb *tpcb);
 err_t tcp_client_sent(void *arg, struct tcp_pcb *tpcb, u16_t len);
 void tcp_client_senddata(struct tcp_pcb *tpcb, struct tcp_client_struct * es);
 void tcp_client_connection_close(struct tcp_pcb *tpcb, struct tcp_client_struct * es );
+
 #endif
