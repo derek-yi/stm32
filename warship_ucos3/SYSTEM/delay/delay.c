@@ -1,11 +1,9 @@
 #include "delay.h"
-
 ////////////////////////////////////////////////////////////////////////////////// 	 
 //如果需要使用OS,则包括下面的头文件即可.
 #if SYSTEM_SUPPORT_OS
 #include "includes.h"					//ucos 使用	  
 #endif
-
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32开发板
@@ -45,8 +43,8 @@
 //delay_intnesting改为：delay_osintnesting
 //////////////////////////////////////////////////////////////////////////////////  
 
-static u8  fac_us=0;	//us延时倍乘数			   
-static u16 fac_ms=0;	//ms延时倍乘数,在ucos下,代表每个节拍的ms数
+static u8  fac_us=0;							//us延时倍乘数			   
+static u16 fac_ms=0;							//ms延时倍乘数,在ucos下,代表每个节拍的ms数
 	
 	
 #if SYSTEM_SUPPORT_OS							//如果SYSTEM_SUPPORT_OS定义了,说明要支持OS了(不限于UCOS).
@@ -109,7 +107,9 @@ void delay_ostimedly(u32 ticks)
 	OSTimeDly(ticks);							//UCOSII延时
 #endif 
 }
- 
+
+int tick_cnt = 0;
+
 //systick中断服务函数,使用ucos时用到
 void SysTick_Handler(void)
 {	
@@ -118,9 +118,11 @@ void SysTick_Handler(void)
 		OSIntEnter();							//进入中断
 		OSTimeTick();       					//调用ucos的时钟服务程序               
 		OSIntExit();       	 					//触发任务切换软中断
+		tick_cnt++;
 	}
 }
 #endif
+
 			   
 //初始化延迟函数
 //当使用OS的时候,此函数会初始化OS的时钟节拍
@@ -131,10 +133,8 @@ void delay_init()
 #if SYSTEM_SUPPORT_OS  							//如果需要支持OS.
 	u32 reload;
 #endif
-
 	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);	//选择外部时钟  HCLK/8
-	fac_us = SystemCoreClock/8000000;				//为系统时钟的1/8  
-	
+	fac_us=SystemCoreClock/8000000;				//为系统时钟的1/8  
 #if SYSTEM_SUPPORT_OS  							//如果需要支持OS.
 	reload=SystemCoreClock/8000000;				//每秒钟的计数次数 单位为K	   
 	reload*=1000000/delay_ostickspersec;		//根据delay_ostickspersec设定溢出时间
@@ -151,13 +151,13 @@ void delay_init()
 }								    
 
 #if SYSTEM_SUPPORT_OS  							//如果需要支持OS.
+//延时nus
 //nus为要延时的us数.		    								   
 void delay_us(u32 nus)
 {		
 	u32 ticks;
 	u32 told,tnow,tcnt=0;
-	u32 reload = SysTick->LOAD;					//LOAD的值	
-	
+	u32 reload=SysTick->LOAD;					//LOAD的值	    	 
 	ticks=nus*fac_us; 							//需要的节拍数	  		 
 	tcnt=0;
 	delay_osschedlock();						//阻止OS调度，防止打断us延时
@@ -175,7 +175,7 @@ void delay_us(u32 nus)
 	};
 	delay_osschedunlock();						//恢复OS调度									    
 }
-
+//延时nms
 //nms:要延时的ms数
 void delay_ms(u16 nms)
 {	
@@ -189,12 +189,12 @@ void delay_ms(u16 nms)
 	}
 	delay_us((u32)(nms*1000));					//普通方式延时  
 }
-#else
+#else //不用OS时
+//延时nus
 //nus为要延时的us数.		    								   
 void delay_us(u32 nus)
 {		
-	u32 temp;	  
-    
+	u32 temp;	    	 
 	SysTick->LOAD=nus*fac_us; 					//时间加载	  		 
 	SysTick->VAL=0x00;        					//清空计数器
 	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;	//开始倒数	  
@@ -205,7 +205,7 @@ void delay_us(u32 nus)
 	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;	//关闭计数器
 	SysTick->VAL =0X00;      					 //清空计数器	 
 }
-
+//延时nms
 //注意nms的范围
 //SysTick->LOAD为24位寄存器,所以,最大延时为:
 //nms<=0xffffff*8*1000/SYSCLK
@@ -214,11 +214,9 @@ void delay_us(u32 nus)
 void delay_ms(u16 nms)
 {	 		  	  
 	u32 temp;		   
-    
 	SysTick->LOAD=(u32)nms*fac_ms;				//时间加载(SysTick->LOAD为24bit)
 	SysTick->VAL =0x00;							//清空计数器
 	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;	//开始倒数  
-	
 	do
 	{
 		temp=SysTick->CTRL;
@@ -227,5 +225,43 @@ void delay_ms(u16 nms)
 	SysTick->VAL =0X00;       					//清空计数器	  	    
 } 
 #endif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

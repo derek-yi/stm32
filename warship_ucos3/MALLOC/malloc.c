@@ -1,4 +1,6 @@
+
 #include "malloc.h"	  
+#include "cpu.h"	  
 
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -163,9 +165,12 @@ void myfree(u8 memx,void *ptr)
 //返回值:分配到的内存首地址.
 void *mymalloc(u8 memx,u32 size)  
 {  
+    CPU_SR cpu_sr;
     u32 offset;   
     
-	offset = my_mem_malloc(memx,size);  	   	 	   
+    //CPU_CRITICAL_ENTER();    
+	offset = my_mem_malloc(memx,size);  	 
+    //CPU_CRITICAL_EXIT();  
     if(offset==0XFFFFFFFF)return NULL;  
     else return (void*)((u32)mallco_dev.membase[memx]+offset);  
 }  
