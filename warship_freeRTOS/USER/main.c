@@ -170,7 +170,7 @@ void tmr2_callback(TimerHandle_t xTimer)
     lcd_print_log(print_buf);
     //printf(print_buf);
     
-    sprintf((char*)print_buf, "tmr2: uart %d, main %d, key %d\r\n", uart_task_cnt, qmsg_task_cnt, key_task_cnt);
+    sprintf((char*)print_buf, "tmr2: uart %d, main %d, key %d\r\n", uart_task_cnt, main_task_cnt, key_task_cnt);
     lcd_print_log(print_buf);
     //printf(print_buf);
 }
